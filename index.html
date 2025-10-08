@@ -289,6 +289,132 @@
             opacity: 0.8;
         }
 
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 2rem;
+            background: #f8fafc;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.popular {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: 'Más Popular';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-period {
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.5rem 0;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pricing-features li i {
+            color: #48bb78;
+            margin-right: 0.5rem;
+        }
+
+        .pricing-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .pricing-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .pricing-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .pricing-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .saas-info {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+            border-radius: 20px;
+        }
+
+        .saas-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
         /* CTA Section */
         .cta-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -505,6 +631,69 @@
                     <h3>Tecnología al Servicio de tu Taller</h3>
                     <p>Moderniza tu negocio con herramientas profesionales diseñadas específicamente para talleres mecánicos.</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing">
+        <div class="container">
+            <h2 class="section-title">Planes y Precios</h2>
+            <p class="section-subtitle">Elige el plan que mejor se adapte a las necesidades de tu taller</p>
+            
+            <div class="pricing-grid">
+                <!-- Plan Gratuito -->
+                <div class="pricing-card">
+                    <h3>Versión Gratuita</h3>
+                    <div class="pricing-price">$0</div>
+                    <div class="pricing-period">Para siempre</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 1 taller</li>
+                        <li><i class="fas fa-check"></i> Hasta 5 órdenes al mes</li>
+                        <li><i class="fas fa-check"></i> Gestión básica de clientes</li>
+                        <li><i class="fas fa-check"></i> Inventario simple</li>
+                        <li><i class="fas fa-check"></i> Soporte por email</li>
+                    </ul>
+                    <a href="dashboard.html" class="pricing-btn secondary">Comenzar Gratis</a>
+                </div>
+
+                <!-- Plan Básico -->
+                <div class="pricing-card popular">
+                    <h3>Versión Básica</h3>
+                    <div class="pricing-price">$70</div>
+                    <div class="pricing-period">por mes</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 1 taller</li>
+                        <li><i class="fas fa-check"></i> Hasta 50 órdenes al mes</li>
+                        <li><i class="fas fa-check"></i> Gestión completa de clientes</li>
+                        <li><i class="fas fa-check"></i> Control de inventario avanzado</li>
+                        <li><i class="fas fa-check"></i> Reportes básicos</li>
+                        <li><i class="fas fa-check"></i> Soporte prioritario</li>
+                    </ul>
+                    <a href="#" class="pricing-btn primary">Elegir Plan</a>
+                </div>
+
+                <!-- Plan Premium -->
+                <div class="pricing-card">
+                    <h3>Versión Premium</h3>
+                    <div class="pricing-price">$180</div>
+                    <div class="pricing-period">por mes</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Talleres ilimitados</li>
+                        <li><i class="fas fa-check"></i> Órdenes ilimitadas</li>
+                        <li><i class="fas fa-check"></i> Reportes avanzados</li>
+                        <li><i class="fas fa-check"></i> Control de stock inteligente</li>
+                        <li><i class="fas fa-check"></i> Multi-usuario</li>
+                        <li><i class="fas fa-check"></i> Soporte 24/7</li>
+                        <li><i class="fas fa-check"></i> API personalizada</li>
+                    </ul>
+                    <a href="#" class="pricing-btn primary">Elegir Plan</a>
+                </div>
+            </div>
+
+            <div class="saas-info">
+                <h3><i class="fas fa-cloud"></i> Modelo SaaS Multitenant</h3>
+                <p>AutoGestor utiliza una arquitectura multitenant que permite a múltiples talleres usar la misma aplicación con bases de datos completamente separadas y seguras. Esto garantiza la privacidad de tus datos mientras reduces costos de infraestructura.</p>
             </div>
         </div>
     </section>
