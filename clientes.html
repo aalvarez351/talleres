@@ -182,11 +182,16 @@
   <script src="./assets/js/paper-dashboard.min.js?v=2.0.1"></script>
   <script src="./js/config.js"></script>
   <script>
-    // Simple auth check for clientes page
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      window.location.href = './login.html';
-    }
+    // Simple auth check for clientes page - only redirect if no token exists
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.log('No token found, redirecting to login');
+        window.location.href = './login.html';
+      } else {
+        console.log('Token found, staying on clientes page');
+      }
+    });
   </script>
   <script src="./js/clientes.js"></script>
 </body>

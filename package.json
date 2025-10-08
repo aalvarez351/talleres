@@ -5,7 +5,8 @@
   "scripts": {
     "start": "cd server && npm start",
     "build": "cd server && npm install",
-    "dev": "cd server && npm run dev"
+    "dev": "cd server && npm run dev",
+    "seed": "cd server && node seed.js"
   },
   "engines": {
     "node": ">=18.0.0"

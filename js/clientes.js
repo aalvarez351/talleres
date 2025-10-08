@@ -14,17 +14,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadClientes() {
   try {
+    console.log('Loading clientes...');
     clientes = await apiRequest(API_CONFIG.ENDPOINTS.CLIENTES);
-    renderClientes(clientes);
+    console.log('Clientes loaded:', clientes);
+    if (clientes && Array.isArray(clientes)) {
+      renderClientes(clientes);
+    } else {
+      clientes = [];
+      renderClientes(clientes);
+    }
   } catch (error) {
     console.error('Error loading clientes:', error);
-    showNotification('Error al cargar los clientes', 'error');
+    clientes = [];
+    renderClientes(clientes);
   }
 }
 
 function renderClientes(clientesToRender) {
   const tbody = document.getElementById('clientesTable');
+  if (!tbody) return;
+  
   tbody.innerHTML = '';
+  
+  if (!clientesToRender || !Array.isArray(clientesToRender)) {
+    return;
+  }
   
   clientesToRender.forEach(cliente => {
     const row = document.createElement('tr');

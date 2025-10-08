@@ -24,18 +24,26 @@ app.get('/health', (req, res) => {
 const mongodbUri = process.env.MONGODB_URI || 'mongodb+srv://aalvarez351:Lentesdesol@ianube.furqsl0.mongodb.net/Talleres?retryWrites=true&w=majority&appName=ianube';
 
 mongoose.connect(mongodbUri)
-.then(() => console.log('Connected to MongoDB Atlas'))
+.then(() => {
+  console.log('Connected to MongoDB Atlas');
+  // Auto-seed if no data exists
+  setTimeout(async () => {
+    try {
+      const { autoSeed } = require('./seed');
+      await autoSeed();
+    } catch (error) {
+      console.log('Auto-seed not available');
+    }
+  }, 2000);
+})
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-
-// Protected routes (require authentication)
-const authMiddleware = require('./middleware/auth');
-app.use('/api/clientes', authMiddleware, require('./routes/clientes'));
-app.use('/api/vehiculos', authMiddleware, require('./routes/vehiculos'));
-app.use('/api/ordenes', authMiddleware, require('./routes/ordenes'));
-app.use('/api/repuestos', authMiddleware, require('./routes/repuestos'));
+app.use('/api/clientes', require('./routes/clientes'));
+app.use('/api/vehiculos', require('./routes/vehiculos'));
+app.use('/api/ordenes', require('./routes/ordenes'));
+app.use('/api/repuestos', require('./routes/repuestos'));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

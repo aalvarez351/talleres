@@ -81,9 +81,13 @@ async function loadRecepcionDashboard() {
 async function loadClientesCount() {
   try {
     const clientes = await apiRequest(API_CONFIG.ENDPOINTS.CLIENTES);
-    document.getElementById('totalClientes').textContent = clientes.length;
+    const element = document.getElementById('totalClientes');
+    if (element) {
+      element.textContent = (clientes && Array.isArray(clientes)) ? clientes.length : '0';
+    }
   } catch (error) {
-    document.getElementById('totalClientes').textContent = '0';
+    const element = document.getElementById('totalClientes');
+    if (element) element.textContent = '0';
   }
 }
 
@@ -103,35 +107,56 @@ async function loadVehiculosCount(type = 'admin') {
 async function loadOrdenesActivas() {
   try {
     const ordenes = await apiRequest(API_CONFIG.ENDPOINTS.ORDENES);
-    const activas = ordenes.filter(orden => orden.estado !== 'Entregado');
-    document.getElementById('ordenesActivas').textContent = activas.length;
+    const element = document.getElementById('ordenesActivas');
+    if (element) {
+      if (ordenes && Array.isArray(ordenes)) {
+        const activas = ordenes.filter(orden => orden.estado !== 'Entregado');
+        element.textContent = activas.length;
+      } else {
+        element.textContent = '0';
+      }
+    }
   } catch (error) {
-    document.getElementById('ordenesActivas').textContent = '0';
+    const element = document.getElementById('ordenesActivas');
+    if (element) element.textContent = '0';
   }
 }
 
 async function loadIngresosHoy() {
   try {
     const ordenes = await apiRequest(API_CONFIG.ENDPOINTS.ORDENES);
-    const hoy = new Date().toDateString();
-    const ordenesHoy = ordenes.filter(orden => 
-      new Date(orden.fechaCreacion).toDateString() === hoy && 
-      orden.estado === 'Entregado'
-    );
-    
-    const ingresos = ordenesHoy.reduce((total, orden) => total + (orden.total || 0), 0);
-    document.getElementById('ingresosHoy').textContent = formatCurrency(ingresos);
+    const element = document.getElementById('ingresosHoy');
+    if (element) {
+      if (ordenes && Array.isArray(ordenes)) {
+        const hoy = new Date().toDateString();
+        const ordenesHoy = ordenes.filter(orden => 
+          new Date(orden.fechaCreacion).toDateString() === hoy && 
+          orden.estado === 'Entregado'
+        );
+        const ingresos = ordenesHoy.reduce((total, orden) => total + (orden.total || 0), 0);
+        element.textContent = formatCurrency(ingresos);
+      } else {
+        element.textContent = '$0';
+      }
+    }
   } catch (error) {
-    document.getElementById('ingresosHoy').textContent = '$0';
+    const element = document.getElementById('ingresosHoy');
+    if (element) element.textContent = '$0';
   }
 }
 
 async function loadOrdenesRecientes() {
   try {
     const ordenes = await apiRequest(API_CONFIG.ENDPOINTS.ORDENES);
+    if (!ordenes || !Array.isArray(ordenes)) {
+      return;
+    }
+    
     const recientes = ordenes.slice(-5).reverse();
     
     const tbody = document.getElementById('ordenesRecientes');
+    if (!tbody) return;
+    
     tbody.innerHTML = '';
     
     for (const orden of recientes) {
@@ -145,10 +170,10 @@ async function loadOrdenesRecientes() {
       };
       
       row.innerHTML = `
-        <td>${orden.numeroOrden}</td>
+        <td>${orden.numeroOrden || 'N/A'}</td>
         <td>${orden.cliente?.nombre || 'N/A'}</td>
-        <td>${orden.vehiculo?.marca} ${orden.vehiculo?.modelo}</td>
-        <td><span class="${estadoClass[orden.estado] || ''}">${orden.estado}</span></td>
+        <td>${orden.vehiculo?.marca || ''} ${orden.vehiculo?.modelo || ''}</td>
+        <td><span class="${estadoClass[orden.estado] || ''}">${orden.estado || 'N/A'}</span></td>
         <td>${formatCurrency(orden.total || 0)}</td>
       `;
       
