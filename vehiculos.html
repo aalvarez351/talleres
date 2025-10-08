@@ -199,6 +199,13 @@
   <script src="./assets/js/plugins/bootstrap-notify.js"></script>
   <script src="./assets/js/paper-dashboard.min.js?v=2.0.1"></script>
   <script src="./js/config.js"></script>
+  <script>
+    // Simple auth check for vehiculos page
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      window.location.href = './login.html';
+    }
+  </script>
   <script src="./js/vehiculos.js"></script>
 </body>
 </html>

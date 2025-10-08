@@ -1,11 +1,5 @@
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', async function() {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-    window.location.href = './login.html';
-    return;
-  }
-  
   const user = JSON.parse(localStorage.getItem('user'));
   setupDashboardByRole(user.role);
   await loadDashboardData();
