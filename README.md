@@ -61,19 +61,16 @@ AutoGestor es un sistema web básico de gestión para talleres mecánicos, desar
    ```
 3. Abre http://localhost:3000 en tu navegador.
 
-### Usuarios de Prueba
+### Instalación y Uso
 
-- **Administrador**:
-  - Email: admin@example.com
-  - Contraseña: password
-
-- **Mecánico**:
-  - Email: mecanico@example.com
-  - Contraseña: password
-
-- **Recepción**:
-  - Email: recepcion@example.com
-  - Contraseña: password
+1. Clona el repositorio
+2. Instala dependencias del backend: `cd server && npm install`
+3. Instala dependencias del frontend: `cd client && npm install`
+4. Configura las variables de entorno en `server/.env`
+5. Ejecuta el seed para datos de ejemplo: `cd server && node seed.js`
+6. Inicia el backend: `cd server && npm start`
+7. Inicia el frontend: `cd client && npm start`
+8. Accede a http://localhost:3000
 
 ## Estructura del Proyecto
 
