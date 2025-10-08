@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>AutoGestor - Clientes</title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="sidebar" data-color="white" data-active-color="danger">
+      <div class="logo">
+        <a href="./dashboard.html" class="simple-text logo-mini">
+          <div class="logo-image-small">
+            <img src="./assets/img/logo-small.png">
+          </div>
+        </a>
+        <a href="./dashboard.html" class="simple-text logo-normal">
+          AutoGestor
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <ul class="nav">
+          <li>
+            <a href="./dashboard.html">
+              <i class="nc-icon nc-bank"></i>
+              <p>Dashboard</p>
+            </a>
+          </li>
+          <li class="active">
+            <a href="./clientes.html">
+              <i class="nc-icon nc-single-02"></i>
+              <p>Clientes</p>
+            </a>
+          </li>
+          <li>
+            <a href="./vehiculos.html">
+              <i class="nc-icon nc-delivery-fast"></i>
+              <p>Vehículos</p>
+            </a>
+          </li>
+          <li>
+            <a href="./ordenes.html">
+              <i class="nc-icon nc-paper"></i>
+              <p>Órdenes</p>
+            </a>
+          </li>
+          <li>
+            <a href="./repuestos.html">
+              <i class="nc-icon nc-box-2"></i>
+              <p>Repuestos</p>
+            </a>
+          </li>
+          <li>
+            <a href="./reportes.html">
+              <i class="nc-icon nc-chart-bar-32"></i>
+              <p>Reportes</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="main-panel">
+      <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <div class="navbar-toggle">
+              <button type="button" class="navbar-toggler">
+                <span class="navbar-toggler-bar bar1"></span>
+                <span class="navbar-toggler-bar bar2"></span>
+                <span class="navbar-toggler-bar bar3"></span>
+              </button>
+            </div>
+            <a class="navbar-brand" href="javascript:;">Gestión de Clientes</a>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5 class="card-title">Lista de Clientes</h5>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <button class="btn btn-primary btn-sm" onclick="showClienteModal()">
+                      <i class="nc-icon nc-simple-add"></i> Nuevo Cliente
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <input type="text" class="form-control" id="searchCliente" placeholder="Buscar por nombre o teléfono...">
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class="text-primary">
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="clientesTable">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cliente -->
+  <div class="modal fade" id="clienteModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clienteModalTitle">Nuevo Cliente</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="clienteForm">
+            <input type="hidden" id="clienteId">
+            <div class="form-group">
+              <label>Nombre *</label>
+              <input type="text" class="form-control" id="nombre" required>
+            </div>
+            <div class="form-group">
+              <label>Teléfono *</label>
+              <input type="tel" class="form-control" id="telefono" required>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" id="email">
+            </div>
+            <div class="form-group">
+              <label>Dirección</label>
+              <textarea class="form-control" id="direccion" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="saveCliente()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/js/core/jquery.min.js"></script>
+  <script src="./assets/js/core/popper.min.js"></script>
+  <script src="./assets/js/core/bootstrap.min.js"></script>
+  <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <script src="./assets/js/plugins/bootstrap-notify.js"></script>
+  <script src="./assets/js/paper-dashboard.min.js?v=2.0.1"></script>
+  <script src="./js/config.js"></script>
+  <script src="./js/clientes.js"></script>
+</body>
+</html>

@@ -1,178 +1,200 @@
 # AutoGestor - Sistema de Gestión para Talleres Mecánicos
 
-AutoGestor es un sistema web básico de gestión para talleres mecánicos, desarrollado con el stack MERN (MongoDB, Express, React, Node.js). Proporciona una interfaz simple y funcional para gestionar clientes, vehículos, órdenes de servicio e inventario de repuestos.
+AutoGestor es un sistema web básico de gestión para talleres mecánicos, desarrollado con HTML/JavaScript (frontend) y Node.js/Express (backend). Proporciona una interfaz simple y funcional para gestionar clientes, vehículos, órdenes de servicio e inventario de repuestos.
 
 ## Características
 
-- **Gestión de Clientes**: Registro y búsqueda de clientes con información de contacto.
-- **Gestión de Vehículos**: Vinculación de vehículos a clientes con detalles técnicos.
-- **Órdenes de Servicio**: Creación y seguimiento de órdenes con repuestos y mano de obra.
-- **Inventario de Repuestos**: Control de stock y actualización automática al completar órdenes.
-- **Reportes Básicos**: Estadísticas de ingresos, servicios completados y totales.
-- **Autenticación**: Login básico con JWT y roles de usuario (Administrador, Mecánico, Recepción).
+- **Gestión de Clientes**: Registro y búsqueda de clientes con información de contacto
+- **Gestión de Vehículos**: Vinculación de vehículos a clientes con detalles técnicos
+- **Órdenes de Servicio**: Creación y seguimiento de órdenes con repuestos y mano de obra
+- **Inventario de Repuestos**: Control de stock y gestión de inventario
+- **Dashboard**: Estadísticas en tiempo real de la operación del taller
+- **Interfaz Responsiva**: Basada en Paper Dashboard con Bootstrap
 
 ## Tecnologías Utilizadas
 
-- **Frontend**: React con React Router, Axios, Bootstrap (Paper Dashboard)
+- **Frontend**: HTML5, JavaScript ES6, Bootstrap 4, Paper Dashboard
 - **Backend**: Node.js con Express
-- **Base de Datos**: MongoDB
-- **Autenticación**: JWT
+- **Base de Datos**: MongoDB Atlas
+- **Despliegue**: GitHub Pages (Frontend) + Render (Backend)
 
-## Instalación y Uso
+## Despliegue en Producción
+
+### Backend en Render
+
+1. Crea una cuenta en [Render](https://render.com)
+2. Conecta tu repositorio de GitHub
+3. Crea un nuevo Web Service con estas configuraciones:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - **Environment**: Node
+   - **Root Directory**: `server`
+
+4. Configura las variables de entorno:
+   ```
+   MONGODB_URI=mongodb+srv://aalvarez351:Lentesdesol@ianube.furqsl0.mongodb.net/Talleres?retryWrites=true&w=majority&appName=ianube
+   JWT_SECRET=tu_jwt_secret_aqui
+   NODE_ENV=production
+   ```
+
+### Frontend en GitHub Pages
+
+1. Ve a la configuración de tu repositorio en GitHub
+2. En la sección "Pages", selecciona "Deploy from a branch"
+3. Selecciona la rama `main` y la carpeta `/ (root)`
+4. Tu aplicación estará disponible en: `https://tu-usuario.github.io/tu-repositorio`
+
+### Configuración de la API
+
+Actualiza la URL de la API en `js/config.js`:
+```javascript
+const API_CONFIG = {
+  BASE_URL: 'https://talleres-58bw.onrender.com/api'
+};
+```
+
+## Desarrollo Local
 
 ### Prerrequisitos
-- Node.js (versión 14 o superior)
-- MongoDB (local o en la nube, como MongoDB Atlas)
+- Node.js (versión 18 o superior)
+- MongoDB Atlas (cuenta gratuita)
 
 ### Instalación
 
-1. Clona o descarga el repositorio.
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/tu-usuario/autogestor.git
+   cd autogestor
+   ```
+
 2. Instala las dependencias del backend:
-   ```
+   ```bash
    cd server
    npm install
    ```
-3. Instala las dependencias del frontend:
+
+3. Configura las variables de entorno en `server/.env`:
    ```
-   cd ../client
-   npm install
+   MONGODB_URI=mongodb+srv://aalvarez351:Lentesdesol@ianube.furqsl0.mongodb.net/Talleres?retryWrites=true&w=majority&appName=ianube
+   JWT_SECRET=tu_jwt_secret_local
+   PORT=5000
    ```
 
-### Configuración
-
-1. En `server/.env`, configura la URI de MongoDB y el secreto JWT.
-2. Ejecuta el script de semillas para agregar datos de ejemplo:
-   ```
-   cd server
+4. Ejecuta el seed para datos de ejemplo:
+   ```bash
    node seed.js
    ```
 
-### Ejecución
-
-1. Inicia el servidor backend:
-   ```
-   cd server
+5. Inicia el servidor backend:
+   ```bash
    npm start
    ```
-2. En otra terminal, inicia el frontend:
-   ```
-   cd client
-   npm start
-   ```
-3. Abre http://localhost:3000 en tu navegador.
 
-### Instalación y Uso
+6. Para el frontend, simplemente abre `index.html` en tu navegador o usa un servidor local:
+   ```bash
+   # Con Python
+   python -m http.server 3000
+   
+   # Con Node.js
+   npx http-server -p 3000
+   ```
 
-1. Clona el repositorio
-2. Instala dependencias del backend: `cd server && npm install`
-3. Instala dependencias del frontend: `cd client && npm install`
-4. Configura las variables de entorno en `server/.env`
-5. Ejecuta el seed para datos de ejemplo: `cd server && node seed.js`
-6. Inicia el backend: `cd server && npm start`
-7. Inicia el frontend: `cd client && npm start`
-8. Accede a http://localhost:3000
+7. Accede a http://localhost:3000
 
 ## Estructura del Proyecto
 
 ```
 autogestor/
-├── client/          # Frontend React
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── services/
-│   └── package.json
+├── assets/          # Recursos estáticos (CSS, JS, imágenes)
+│   ├── css/
+│   ├── js/
+│   └── img/
+├── js/              # JavaScript de la aplicación
+│   ├── config.js    # Configuración de API
+│   ├── dashboard.js # Funcionalidad del dashboard
+│   ├── clientes.js  # Gestión de clientes
+│   ├── vehiculos.js # Gestión de vehículos
+│   ├── ordenes.js   # Gestión de órdenes
+│   └── repuestos.js # Gestión de repuestos
 ├── server/          # Backend Node.js
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── index.js
-│   ├── seed.js
+│   ├── models/      # Modelos de MongoDB
+│   ├── routes/      # Rutas de la API
+│   ├── middleware/  # Middleware de autenticación
+│   ├── index.js     # Servidor principal
+│   ├── seed.js      # Datos de ejemplo
 │   └── package.json
+├── dashboard.html   # Dashboard principal
+├── clientes.html    # Gestión de clientes
+├── vehiculos.html   # Gestión de vehículos
+├── ordenes.html     # Gestión de órdenes
+├── repuestos.html   # Gestión de repuestos
+├── index.html       # Página de entrada
 └── README.md
 ```
 
-### What's included
+## URLs de Producción
 
-Within the download you'll find the following directories and files:
+- **Frontend**: https://aalvarez351.github.io/talleres
+- **Backend API**: https://talleres-58bw.onrender.com
+- **Health Check**: https://talleres-58bw.onrender.com/health
 
-```
-Paper Dashboard 2
-.
-├── CHANGELOG.md
-├── README.md
-├── assets
-│   ├── css/
-│   ├── demo/
-│   ├── fonts/
-│   ├── img/
-│   ├── js
-│   │   ├── core/
-│   │   ├── paper-dashboard.js
-│   │   ├── paper-dashboard.js.map
-│   │   ├── paper-dashboard.min.js
-│   │   └── plugins
-│   │       ├── bootstrap-notify.js
-│   │       ├── chartjs.min.js
-│   │       └── perfect-scrollbar.jquery.min.js
-│   └── scss/
-│       ├── paper-dashboard/
-│       │   ├── cards/
-│       │   ├── mixins/
-│       │   └── plugins/
-│       └── paper-dashboard.scss
-├── docs/
-│   └── documentation.html
-├── examples/
-│   ├── dashboard.html
-│   ├── icons.html
-│   ├── map.html
-│   ├── notifications.html
-│   ├── tables.html
-│   ├── typography.html
-│   ├── upgrade.html
-│   └── user.html
-├── gulpfile.js
-├── nucleo-icons.html
-└── package.json
-```
+## Funcionalidades Principales
 
-## Getting started
-- Download the project’s zip
-- Make sure you have [node.js](https://nodejs.org/en/){:rel="nofollow"} installed
-- Type `npm install` in terminal/console in the source folder where `package.json` is located
-- You will find all the branding colors inside `assets/scss/core/variables/_brand.scss`. You can change them with a HEX value or with other predefined variables from `assets/scss/core/variables/_colors.scss`
-- Run in terminal `gulp compile-scss` for a single compilation or gulp watch for continous compilation of the changes that you make in `*.scss` files. This command should be run in the same folder where `gulpfile.js` and `package.json` are located
-- Run in terminal `gulp open-app` for opening the Presentation Page (default) of the product. You can set in `gulpfile.js` from your downloaded archive any page you want to open in browser, `at line 30: gulp.src('./examples/dashboard.html')`
+### Dashboard
+- Estadísticas en tiempo real
+- Resumen de clientes, vehículos y órdenes
+- Órdenes recientes
+- Ingresos del día
 
-## Upgrade to PRO Version
+### Gestión de Clientes
+- Crear, editar y eliminar clientes
+- Búsqueda por nombre o teléfono
+- Información de contacto completa
 
-Are you looking for more components? Please check our Premium Version of Paper Dashboard right [here](https://www.creative-tim.com/product/paper-dashboard-2-pro).
+### Gestión de Vehículos
+- Registro de vehículos vinculados a clientes
+- Información técnica (marca, modelo, año, placa)
+- Búsqueda y filtrado
 
-## Useful Links
+### Órdenes de Servicio
+- Creación de órdenes con número único
+- Estados: Pendiente, En progreso, Completado, Entregado
+- Cálculo automático de totales
+- Filtrado por estado y búsqueda
 
-More products from Creative Tim: <http://www.creative-tim.com/bootstrap-themes>
+### Inventario de Repuestos
+- Control de stock
+- Alertas de stock bajo
+- Gestión de precios y costos
+- Filtrado por disponibilidad
 
-Tutorials: <https://www.youtube.com/channel/UCVyTG4sCw-rOvB9oHkzZD1w>
+## Contribución
 
-Freebies: <http://www.creative-tim.com/products>
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-Affiliate Program (earn money): <http://www.creative-tim.com/affiliates/new>
+## Licencia
 
-Social Media:
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
-Twitter: <https://twitter.com/CreativeTim>
+## Soporte
 
-Facebook: <https://www.facebook.com/CreativeTim>
+Para soporte técnico o preguntas:
+- Crea un issue en GitHub
+- Email: aalvarez351@gmail.com
 
-Dribbble: <https://dribbble.com/creativetim>
+## Roadmap
 
-Google+: <https://plus.google.com/+CreativetimPage>
+- [ ] Autenticación de usuarios
+- [ ] Reportes avanzados
+- [ ] Notificaciones por email
+- [ ] Integración con sistemas de facturación
+- [ ] App móvil
+- [ ] Multi-tenant (varios talleres)
 
-Instagram: <https://instagram.com/creativetimofficial>
+---
 
-[CHANGELOG]: ./CHANGELOG.md
-[LICENSE]: ./LICENSE
-[version-badge]: https://img.shields.io/badge/version-2.0.1-blue.svg
-[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+**AutoGestor** - Simplificando la gestión de talleres mecánicos 🔧

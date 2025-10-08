@@ -9,16 +9,22 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['https://aalvarez351.github.io', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true
+}));
 app.use(express.json());
 
-// Decode MongoDB URI from base64
-const mongodbUri = Buffer.from(process.env.MONGODB_URI_BASE64, 'base64').toString('utf-8');
-const jwtSecret = Buffer.from(process.env.JWT_SECRET_BASE64, 'base64').toString('utf-8');
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'AutoGestor API is running' });
+});
 
-// MongoDB connection
-mongoose.connect(mongodbUri, { dbName: 'Talleres' })
-.then(() => console.log('Connected to MongoDB'))
+// MongoDB connection - Direct URI for Render
+const mongodbUri = process.env.MONGODB_URI || 'mongodb+srv://aalvarez351:Lentesdesol@ianube.furqsl0.mongodb.net/Talleres?retryWrites=true&w=majority&appName=ianube';
+
+mongoose.connect(mongodbUri)
+.then(() => console.log('Connected to MongoDB Atlas'))
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes

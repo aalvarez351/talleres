@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: autogestor-api
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://aalvarez351:Lentesdesol@ianube.furqsl0.mongodb.net/Talleres?retryWrites=true&w=majority&appName=ianube
+      - key: JWT_SECRET
+        generateValue: true

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>AutoGestor - Vehículos</title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="sidebar" data-color="white" data-active-color="danger">
+      <div class="logo">
+        <a href="./dashboard.html" class="simple-text logo-mini">
+          <div class="logo-image-small">
+            <img src="./assets/img/logo-small.png">
+          </div>
+        </a>
+        <a href="./dashboard.html" class="simple-text logo-normal">
+          AutoGestor
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <ul class="nav">
+          <li>
+            <a href="./dashboard.html">
+              <i class="nc-icon nc-bank"></i>
+              <p>Dashboard</p>
+            </a>
+          </li>
+          <li>
+            <a href="./clientes.html">
+              <i class="nc-icon nc-single-02"></i>
+              <p>Clientes</p>
+            </a>
+          </li>
+          <li class="active">
+            <a href="./vehiculos.html">
+              <i class="nc-icon nc-delivery-fast"></i>
+              <p>Vehículos</p>
+            </a>
+          </li>
+          <li>
+            <a href="./ordenes.html">
+              <i class="nc-icon nc-paper"></i>
+              <p>Órdenes</p>
+            </a>
+          </li>
+          <li>
+            <a href="./repuestos.html">
+              <i class="nc-icon nc-box-2"></i>
+              <p>Repuestos</p>
+            </a>
+          </li>
+          <li>
+            <a href="./reportes.html">
+              <i class="nc-icon nc-chart-bar-32"></i>
+              <p>Reportes</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="main-panel">
+      <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <div class="navbar-toggle">
+              <button type="button" class="navbar-toggler">
+                <span class="navbar-toggler-bar bar1"></span>
+                <span class="navbar-toggler-bar bar2"></span>
+                <span class="navbar-toggler-bar bar3"></span>
+              </button>
+            </div>
+            <a class="navbar-brand" href="javascript:;">Gestión de Vehículos</a>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5 class="card-title">Lista de Vehículos</h5>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <button class="btn btn-primary btn-sm" onclick="showVehiculoModal()">
+                      <i class="nc-icon nc-simple-add"></i> Nuevo Vehículo
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <input type="text" class="form-control" id="searchVehiculo" placeholder="Buscar por placa, marca o modelo...">
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class="text-primary">
+                      <tr>
+                        <th>Placa</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Año</th>
+                        <th>Cliente</th>
+                        <th>Kilometraje</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="vehiculosTable">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Vehículo -->
+  <div class="modal fade" id="vehiculoModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="vehiculoModalTitle">Nuevo Vehículo</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="vehiculoForm">
+            <input type="hidden" id="vehiculoId">
+            <div class="form-group">
+              <label>Cliente *</label>
+              <select class="form-control" id="clienteId" required>
+                <option value="">Seleccionar cliente</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Placa *</label>
+                  <input type="text" class="form-control" id="placa" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Año</label>
+                  <input type="number" class="form-control" id="ano" min="1900" max="2030">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Marca *</label>
+                  <input type="text" class="form-control" id="marca" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Modelo *</label>
+                  <input type="text" class="form-control" id="modelo" required>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Kilometraje</label>
+              <input type="number" class="form-control" id="kilometraje" min="0">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="saveVehiculo()">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/js/core/jquery.min.js"></script>
+  <script src="./assets/js/core/popper.min.js"></script>
+  <script src="./assets/js/core/bootstrap.min.js"></script>
+  <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <script src="./assets/js/plugins/bootstrap-notify.js"></script>
+  <script src="./assets/js/paper-dashboard.min.js?v=2.0.1"></script>
+  <script src="./js/config.js"></script>
+  <script src="./js/vehiculos.js"></script>
+</body>
+</html>
