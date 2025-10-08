@@ -5,6 +5,10 @@
   "homepage": "http://creative-tim.com/product/paper-dashboard-2",
   "author": "Creative Tim",
   "license": "Creative Tim License <www.creative-tim.com/license>",
+  "scripts": {
+    "start": "cd server && npm start",
+    "build": "cd client && npm run build"
+  },
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^6.1.0",
