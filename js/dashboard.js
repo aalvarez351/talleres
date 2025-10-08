@@ -61,11 +61,7 @@ async function loadAdminDashboard() {
 }
 
 async function loadMecanicoDashboard() {
-  await Promise.all([
-    loadOrdenesPendientes(),
-    loadOrdenesCompletadas(),
-    loadOrdenesMecanico()
-  ]);
+  await loadOrdenesPendientes();
 }
 
 async function loadRecepcionDashboard() {

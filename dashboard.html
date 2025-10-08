@@ -11,6 +11,7 @@
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
   <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
   <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
+  <link href="./css/mechanic-dashboard.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -215,7 +216,7 @@
         <!-- Dashboard Mecánico -->
         <div id="mecanicoDashboard" style="display:none;">
           <div class="row">
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-3 col-md-6">
               <div class="card card-stats">
                 <div class="card-body">
                   <div class="row">
@@ -226,7 +227,7 @@
                     </div>
                     <div class="col-7 col-md-8">
                       <div class="numbers">
-                        <p class="card-category">Órdenes Pendientes</p>
+                        <p class="card-category">Pendientes</p>
                         <p class="card-title" id="ordenesPendientes">0</p>
                       </div>
                     </div>
@@ -234,7 +235,26 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-3 col-md-6">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-5 col-md-4">
+                      <div class="icon-big text-center icon-warning">
+                        <i class="nc-icon nc-settings text-info"></i>
+                      </div>
+                    </div>
+                    <div class="col-7 col-md-8">
+                      <div class="numbers">
+                        <p class="card-category">En Progreso</p>
+                        <p class="card-title" id="ordenesEnProgreso">0</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
               <div class="card card-stats">
                 <div class="card-body">
                   <div class="row">
@@ -245,7 +265,7 @@
                     </div>
                     <div class="col-7 col-md-8">
                       <div class="numbers">
-                        <p class="card-category">Órdenes Completadas</p>
+                        <p class="card-category">Completadas Hoy</p>
                         <p class="card-title" id="ordenesCompletadas">0</p>
                       </div>
                     </div>
@@ -253,29 +273,65 @@
                 </div>
               </div>
             </div>
+            <div class="col-lg-3 col-md-6">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-5 col-md-4">
+                      <div class="icon-big text-center icon-warning">
+                        <i class="nc-icon nc-time-alarm text-danger"></i>
+                      </div>
+                    </div>
+                    <div class="col-7 col-md-8">
+                      <div class="numbers">
+                        <p class="card-category">Urgentes</p>
+                        <p class="card-title" id="ordenesUrgentes">0</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+          
+          <!-- Órdenes Pendientes -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title">🔧 Órdenes Pendientes</h5>
+                  <p class="card-category">Trabajos por iniciar</p>
+                </div>
+                <div class="card-body orden-section">
+                  <div id="ordenesPendientesList"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Órdenes En Progreso -->
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title">⚙️ En Progreso</h5>
+                  <p class="card-category">Trabajos en curso</p>
+                </div>
+                <div class="card-body orden-section">
+                  <div id="ordenesEnProgresoList"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Órdenes Completadas -->
           <div class="row">
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header">
-                  <h5 class="card-title">Mis Órdenes de Trabajo</h5>
+                  <h5 class="card-title">✅ Órdenes Completadas Hoy</h5>
+                  <p class="card-category">Trabajos finalizados</p>
                 </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead class="text-primary">
-                        <tr>
-                          <th>Orden</th>
-                          <th>Cliente</th>
-                          <th>Vehículo</th>
-                          <th>Estado</th>
-                          <th>Acción</th>
-                        </tr>
-                      </thead>
-                      <tbody id="ordenesMecanico">
-                      </tbody>
-                    </table>
-                  </div>
+                <div class="card-body orden-section">
+                  <div id="ordenesCompletadasList"></div>
                 </div>
               </div>
             </div>
