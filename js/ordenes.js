@@ -111,10 +111,12 @@ function loadVehiculosByCliente() {
   const clienteId = document.getElementById('clienteId').value;
   const vehiculoSelect = document.getElementById('vehiculoId');
   
+  if (!vehiculoSelect) return;
+  
   vehiculoSelect.innerHTML = '<option value="">Seleccionar vehículo</option>';
   
-  if (clienteId) {
-    const vehiculosCliente = vehiculos.filter(v => v.cliente === clienteId);
+  if (clienteId && vehiculos && Array.isArray(vehiculos)) {
+    const vehiculosCliente = vehiculos.filter(v => v.cliente === clienteId || (v.cliente && v.cliente._id === clienteId));
     vehiculosCliente.forEach(vehiculo => {
       const option = document.createElement('option');
       option.value = vehiculo._id;
