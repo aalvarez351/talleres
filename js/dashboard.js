@@ -1,22 +1,83 @@
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', async function() {
+  if (!checkAuth()) return;
+  
+  const user = JSON.parse(localStorage.getItem('user'));
+  setupDashboardByRole(user.role);
   await loadDashboardData();
 });
 
+function setupDashboardByRole(role) {
+  const adminContent = document.getElementById('adminDashboard');
+  const mecanicoContent = document.getElementById('mecanicoDashboard');
+  const recepcionContent = document.getElementById('recepcionDashboard');
+  
+  // Hide all dashboards
+  if (adminContent) adminContent.style.display = 'none';
+  if (mecanicoContent) mecanicoContent.style.display = 'none';
+  if (recepcionContent) recepcionContent.style.display = 'none';
+  
+  // Show appropriate dashboard
+  switch(role) {
+    case 'admin':
+      if (adminContent) adminContent.style.display = 'block';
+      break;
+    case 'mecanico':
+      if (mecanicoContent) mecanicoContent.style.display = 'block';
+      break;
+    case 'recepcion':
+      if (recepcionContent) recepcionContent.style.display = 'block';
+      break;
+  }
+}
+
 async function loadDashboardData() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  
   try {
-    // Cargar estadísticas
-    await Promise.all([
-      loadClientesCount(),
-      loadVehiculosCount(),
-      loadOrdenesActivas(),
-      loadIngresosHoy(),
-      loadOrdenesRecientes()
-    ]);
+    switch(user.role) {
+      case 'admin':
+        await loadAdminDashboard();
+        break;
+      case 'mecanico':
+        await loadMecanicoDashboard();
+        break;
+      case 'recepcion':
+        await loadRecepcionDashboard();
+        break;
+    }
   } catch (error) {
     console.error('Error loading dashboard data:', error);
-    showNotification('Error al cargar los datos del dashboard', 'error');
   }
+}
+
+async function loadAdminDashboard() {
+  await Promise.all([
+    loadClientesCount(),
+    loadVehiculosCount(),
+    loadOrdenesActivas(),
+    loadIngresosHoy(),
+    loadOrdenesRecientes(),
+    loadStockAlertas()
+  ]);
+}
+
+async function loadMecanicoDashboard() {
+  await Promise.all([
+    loadOrdenesPendientes(),
+    loadOrdenesCompletadas(),
+    loadOrdenesMecanico()
+  ]);
+}
+
+async function loadRecepcionDashboard() {
+  await Promise.all([
+    loadClientesHoy(),
+    loadVehiculosCount('recep'),
+    loadNuevasOrdenes(),
+    loadClientesRecientes(),
+    loadOrdenesEntrada()
+  ]);
 }
 
 async function loadClientesCount() {
@@ -28,12 +89,16 @@ async function loadClientesCount() {
   }
 }
 
-async function loadVehiculosCount() {
+async function loadVehiculosCount(type = 'admin') {
   try {
     const vehiculos = await apiRequest(API_CONFIG.ENDPOINTS.VEHICULOS);
-    document.getElementById('totalVehiculos').textContent = vehiculos.length;
+    const elementId = type === 'recep' ? 'totalVehiculosRecep' : 'totalVehiculos';
+    const element = document.getElementById(elementId);
+    if (element) element.textContent = vehiculos.length;
   } catch (error) {
-    document.getElementById('totalVehiculos').textContent = '0';
+    const elementId = type === 'recep' ? 'totalVehiculosRecep' : 'totalVehiculos';
+    const element = document.getElementById(elementId);
+    if (element) element.textContent = '0';
   }
 }
 

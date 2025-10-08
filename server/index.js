@@ -29,10 +29,13 @@ mongoose.connect(mongodbUri)
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/clientes', require('./routes/clientes'));
-app.use('/api/vehiculos', require('./routes/vehiculos'));
-app.use('/api/ordenes', require('./routes/ordenes'));
-app.use('/api/repuestos', require('./routes/repuestos'));
+
+// Protected routes (require authentication)
+const authMiddleware = require('./middleware/auth');
+app.use('/api/clientes', authMiddleware, require('./routes/clientes'));
+app.use('/api/vehiculos', authMiddleware, require('./routes/vehiculos'));
+app.use('/api/ordenes', authMiddleware, require('./routes/ordenes'));
+app.use('/api/repuestos', authMiddleware, require('./routes/repuestos'));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

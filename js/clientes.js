@@ -3,6 +3,7 @@ let clientes = [];
 let editingClienteId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+  if (!checkAuth()) return;
   loadClientes();
   
   // Search functionality

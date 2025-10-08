@@ -16,17 +16,29 @@ const API_CONFIG = {
 // Función para hacer peticiones HTTP
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_CONFIG.BASE_URL}${endpoint}`;
+  const token = localStorage.getItem('authToken');
   
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` })
     },
   };
   
   const config = { ...defaultOptions, ...options };
+  if (config.headers && token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   
   try {
     const response = await fetch(url, config);
+    
+    if (response.status === 401) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      window.location.href = './login.html';
+      return;
+    }
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
