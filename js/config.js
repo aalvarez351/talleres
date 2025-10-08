@@ -36,9 +36,6 @@ async function apiRequest(endpoint, options = {}) {
     if (response.status === 401) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      if (!window.location.pathname.includes('login.html')) {
-        window.location.replace('./login.html');
-      }
       return;
     }
     
