@@ -179,7 +179,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Mano de Obra</label>
-                  <input type="number" class="form-control" id="manoObra" min="0" step="0.01" onchange="calcularTotal()">
+                  <input type="number" class="form-control" id="manoDeObra" min="0" step="0.01" onchange="calcularTotal()" placeholder="0.00">
                 </div>
               </div>
               <div class="col-md-6">
@@ -196,7 +196,13 @@
             </div>
             <div class="form-group">
               <label>Total</label>
-              <input type="number" class="form-control" id="total" readonly>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" class="form-control" id="total" readonly placeholder="0.00">
+              </div>
+              <small class="form-text text-muted">Se calcula automáticamente basado en mano de obra y repuestos</small>
             </div>
           </form>
         </div>

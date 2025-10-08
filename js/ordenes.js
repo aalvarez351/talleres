@@ -2,12 +2,15 @@
 let ordenes = [];
 let clientes = [];
 let vehiculos = [];
+let repuestos = [];
 let editingOrdenId = null;
+let ordenCounter = 1;
 
 document.addEventListener('DOMContentLoaded', function() {
   loadOrdenes();
   loadClientes();
   loadVehiculos();
+  loadRepuestos();
   
   // Search and filter functionality
   document.getElementById('searchOrden').addEventListener('input', filterOrdenes);
@@ -17,10 +20,25 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadOrdenes() {
   try {
     ordenes = await apiRequest(API_CONFIG.ENDPOINTS.ORDENES);
+    if (!ordenes || !Array.isArray(ordenes)) {
+      ordenes = [];
+    }
+    
+    // Update orden counter based on existing orders
+    if (ordenes.length > 0) {
+      const maxNumber = Math.max(...ordenes.map(o => {
+        const numero = o.numero || o.numeroOrden || '';
+        const match = numero.match(/-(\d+)$/);
+        return match ? parseInt(match[1]) : 0;
+      }));
+      ordenCounter = maxNumber + 1;
+    }
+    
     renderOrdenes(ordenes);
   } catch (error) {
     console.error('Error loading ordenes:', error);
-    showNotification('Error al cargar las órdenes', 'error');
+    ordenes = [];
+    renderOrdenes(ordenes);
   }
 }
 
@@ -36,14 +54,36 @@ async function loadClientes() {
 async function loadVehiculos() {
   try {
     vehiculos = await apiRequest(API_CONFIG.ENDPOINTS.VEHICULOS);
+    if (!vehiculos || !Array.isArray(vehiculos)) {
+      vehiculos = [];
+    }
   } catch (error) {
     console.error('Error loading vehiculos:', error);
+    vehiculos = [];
+  }
+}
+
+async function loadRepuestos() {
+  try {
+    repuestos = await apiRequest(API_CONFIG.ENDPOINTS.REPUESTOS);
+    if (!repuestos || !Array.isArray(repuestos)) {
+      repuestos = [];
+    }
+  } catch (error) {
+    console.error('Error loading repuestos:', error);
+    repuestos = [];
   }
 }
 
 function renderOrdenes(ordenesToRender) {
   const tbody = document.getElementById('ordenesTable');
+  if (!tbody) return;
+  
   tbody.innerHTML = '';
+  
+  if (!ordenesToRender || !Array.isArray(ordenesToRender)) {
+    return;
+  }
   
   ordenesToRender.forEach(orden => {
     const row = document.createElement('tr');
@@ -55,24 +95,41 @@ function renderOrdenes(ordenesToRender) {
       'Entregado': 'text-primary'
     };
     
+    const clienteNombre = orden.cliente?.nombre || (typeof orden.cliente === 'string' ? 'Cliente ID: ' + orden.cliente : 'N/A');
+    const vehiculoInfo = orden.vehiculo ? `${orden.vehiculo.marca || ''} ${orden.vehiculo.modelo || ''}` : 'N/A';
+    const fechaCreacion = orden.createdAt || orden.fechaCreacion || new Date();
+    
     row.innerHTML = `
-      <td>${orden.numeroOrden}</td>
-      <td>${orden.cliente?.nombre || 'N/A'}</td>
-      <td>${orden.vehiculo?.marca} ${orden.vehiculo?.modelo}</td>
-      <td><span class="${estadoClass[orden.estado] || ''}">${orden.estado}</span></td>
+      <td>${orden.numero || orden.numeroOrden || 'N/A'}</td>
+      <td>${clienteNombre}</td>
+      <td>${vehiculoInfo}</td>
+      <td><span class="badge badge-${getEstadoBadge(orden.estado)}">${orden.estado || 'Pendiente'}</span></td>
       <td>${formatCurrency(orden.total || 0)}</td>
-      <td>${formatDate(orden.fechaCreacion)}</td>
+      <td>${formatDate(fechaCreacion)}</td>
       <td>
-        <button class="btn btn-sm btn-info" onclick="editOrden('${orden._id}')">
+        <button class="btn btn-sm btn-info" onclick="editOrden('${orden._id}')" title="Editar">
           <i class="nc-icon nc-ruler-pencil"></i>
         </button>
-        <button class="btn btn-sm btn-danger" onclick="deleteOrden('${orden._id}')">
+        <button class="btn btn-sm btn-success" onclick="viewOrden('${orden._id}')" title="Ver detalles">
+          <i class="nc-icon nc-zoom-split"></i>
+        </button>
+        <button class="btn btn-sm btn-danger" onclick="deleteOrden('${orden._id}')" title="Eliminar">
           <i class="nc-icon nc-simple-remove"></i>
         </button>
       </td>
     `;
     tbody.appendChild(row);
   });
+}
+
+function getEstadoBadge(estado) {
+  const badges = {
+    'Pendiente': 'warning',
+    'En progreso': 'info',
+    'Completado': 'success',
+    'Entregado': 'primary'
+  };
+  return badges[estado] || 'secondary';
 }
 
 function filterOrdenes() {
@@ -127,8 +184,65 @@ function loadVehiculosByCliente() {
 }
 
 function calcularTotal() {
-  const manoObra = parseFloat(document.getElementById('manoObra').value) || 0;
-  document.getElementById('total').value = manoObra;
+  const manoObra = parseFloat(document.getElementById('manoDeObra').value) || 0;
+  // In future versions, add repuestos cost here
+  const repuestosCost = 0; // TODO: Calculate from selected repuestos
+  const total = manoObra + repuestosCost;
+  
+  const totalField = document.getElementById('total');
+  if (totalField) {
+    totalField.value = total.toFixed(2);
+  }
+}
+
+function viewOrden(id) {
+  const orden = ordenes.find(o => o._id === id);
+  if (orden) {
+    const cliente = clientes.find(c => c._id === (orden.cliente?._id || orden.cliente));
+    const vehiculo = vehiculos.find(v => v._id === (orden.vehiculo?._id || orden.vehiculo));
+    
+    let detalles = `
+      <strong>Orden:</strong> ${orden.numero || orden.numeroOrden || 'N/A'}<br>
+      <strong>Cliente:</strong> ${cliente?.nombre || 'N/A'}<br>
+      <strong>Vehículo:</strong> ${vehiculo ? `${vehiculo.marca} ${vehiculo.modelo} - ${vehiculo.placa}` : 'N/A'}<br>
+      <strong>Descripción:</strong> ${orden.descripcion || 'N/A'}<br>
+      <strong>Estado:</strong> ${orden.estado || 'Pendiente'}<br>
+      <strong>Mano de Obra:</strong> ${formatCurrency(orden.manoDeObra || orden.manoObra || 0)}<br>
+      <strong>Total:</strong> ${formatCurrency(orden.total || 0)}<br>
+      <strong>Fecha:</strong> ${formatDate(orden.createdAt || orden.fechaCreacion || new Date())}
+    `;
+    
+    // Create a simple modal or alert with details
+    const modal = document.createElement('div');
+    modal.innerHTML = `
+      <div class="modal fade" id="viewOrdenModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Detalles de la Orden</h5>
+              <button type="button" class="close" data-dismiss="modal">
+                <span>&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ${detalles}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    $('#viewOrdenModal').modal('show');
+    
+    // Remove modal after hiding
+    $('#viewOrdenModal').on('hidden.bs.modal', function() {
+      modal.remove();
+    });
+  }
 }
 
 function showOrdenModal(orden = null) {
@@ -142,23 +256,40 @@ function showOrdenModal(orden = null) {
   
   if (orden) {
     document.getElementById('ordenId').value = orden._id;
-    document.getElementById('clienteId').value = orden.cliente?._id || '';
-    document.getElementById('vehiculoId').value = orden.vehiculo?._id || '';
-    document.getElementById('descripcion').value = orden.descripcion;
-    document.getElementById('manoObra').value = orden.manoObra || 0;
-    document.getElementById('estado').value = orden.estado;
+    const clienteId = orden.cliente?._id || orden.cliente;
+    const vehiculoId = orden.vehiculo?._id || orden.vehiculo;
+    
+    document.getElementById('clienteId').value = clienteId || '';
+    document.getElementById('descripcion').value = orden.descripcion || '';
+    document.getElementById('manoDeObra').value = orden.manoDeObra || orden.manoObra || 0;
+    document.getElementById('estado').value = orden.estado || 'Pendiente';
     document.getElementById('total').value = orden.total || 0;
     
     // Load vehiculos for selected cliente
-    if (orden.cliente?._id) {
+    if (clienteId) {
       loadVehiculosByCliente();
       setTimeout(() => {
-        document.getElementById('vehiculoId').value = orden.vehiculo?._id || '';
-      }, 100);
+        document.getElementById('vehiculoId').value = vehiculoId || '';
+      }, 200);
     }
+  } else {
+    // Generate new orden number
+    generateOrdenNumber();
   }
   
   $('#ordenModal').modal('show');
+}
+
+function generateOrdenNumber() {
+  const year = new Date().getFullYear();
+  const nextNumber = String(ordenCounter).padStart(3, '0');
+  const numeroOrden = `OS-${year}-${nextNumber}`;
+  
+  // Update counter for next orden
+  ordenCounter++;
+  
+  // Display the number (you can add a field to show it)
+  console.log('Nueva orden:', numeroOrden);
 }
 
 function editOrden(id) {
@@ -176,26 +307,47 @@ async function saveOrden() {
     return;
   }
   
+  const clienteId = document.getElementById('clienteId').value;
+  const vehiculoId = document.getElementById('vehiculoId').value;
+  const descripcion = document.getElementById('descripcion').value;
+  const manoDeObra = parseFloat(document.getElementById('manoDeObra').value) || 0;
+  const estado = document.getElementById('estado').value;
+  const total = parseFloat(document.getElementById('total').value) || manoDeObra;
+  
+  if (!clienteId || !vehiculoId || !descripcion) {
+    showNotification('Por favor complete todos los campos requeridos', 'error');
+    return;
+  }
+  
   const ordenData = {
-    cliente: document.getElementById('clienteId').value,
-    vehiculo: document.getElementById('vehiculoId').value,
-    descripcion: document.getElementById('descripcion').value,
-    manoObra: parseFloat(document.getElementById('manoObra').value) || 0,
-    estado: document.getElementById('estado').value,
-    total: parseFloat(document.getElementById('total').value) || 0
+    cliente: clienteId,
+    vehiculo: vehiculoId,
+    descripcion: descripcion,
+    manoDeObra: manoDeObra,
+    estado: estado,
+    total: total
   };
   
+  // Add orden number for new orders
+  if (!editingOrdenId) {
+    const year = new Date().getFullYear();
+    const nextNumber = String(ordenCounter).padStart(3, '0');
+    ordenData.numero = `OS-${year}-${nextNumber}`;
+    ordenCounter++;
+  }
+  
   try {
+    let response;
     if (editingOrdenId) {
       // Update existing orden
-      await apiRequest(`${API_CONFIG.ENDPOINTS.ORDENES}/${editingOrdenId}`, {
+      response = await apiRequest(`${API_CONFIG.ENDPOINTS.ORDENES}/${editingOrdenId}`, {
         method: 'PUT',
         body: JSON.stringify(ordenData)
       });
       showNotification('Orden actualizada exitosamente');
     } else {
       // Create new orden
-      await apiRequest(API_CONFIG.ENDPOINTS.ORDENES, {
+      response = await apiRequest(API_CONFIG.ENDPOINTS.ORDENES, {
         method: 'POST',
         body: JSON.stringify(ordenData)
       });
@@ -203,10 +355,10 @@ async function saveOrden() {
     }
     
     $('#ordenModal').modal('hide');
-    loadOrdenes();
+    await loadOrdenes();
   } catch (error) {
     console.error('Error saving orden:', error);
-    showNotification('Error al guardar la orden', 'error');
+    showNotification('Error al guardar la orden: ' + (error.message || 'Error desconocido'), 'error');
   }
 }
 
