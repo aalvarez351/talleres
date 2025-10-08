@@ -2,8 +2,8 @@
     // Check if user is logged in
     const token = localStorage.getItem('authToken');
     if (token) {
-        window.location.href = "./dashboard.html";
+        window.location.replace("./dashboard.html");
     } else {
-        window.location.href = "./login.html";
+        window.location.replace("./login.html");
     }
 </script>

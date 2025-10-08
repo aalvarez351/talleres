@@ -1,12 +1,16 @@
 // Authentication functionality
 document.addEventListener('DOMContentLoaded', function() {
-  // Check if already logged in
+  const currentPage = window.location.pathname;
+  const isLoginPage = currentPage.includes('login.html') || currentPage === '/login.html';
   const token = localStorage.getItem('authToken');
-  if (token && window.location.pathname !== '/login.html') {
-    // User is logged in, continue
+  
+  // Prevent redirect loops
+  if (isLoginPage && token) {
+    window.location.href = './dashboard.html';
     return;
-  } else if (!token && window.location.pathname !== '/login.html') {
-    // User not logged in, redirect to login
+  }
+  
+  if (!isLoginPage && !token) {
     window.location.href = './login.html';
     return;
   }
@@ -36,7 +40,11 @@ async function handleLogin(e) {
     const demoToken = 'demo-token-' + Date.now();
     localStorage.setItem('authToken', demoToken);
     localStorage.setItem('user', JSON.stringify({ email, ...user }));
-    window.location.href = './dashboard.html';
+    
+    // Small delay to ensure storage is complete
+    setTimeout(() => {
+      window.location.replace('./dashboard.html');
+    }, 100);
   } else {
     alert('Email o contraseña incorrectos');
   }
@@ -45,14 +53,17 @@ async function handleLogin(e) {
 function logout() {
   localStorage.removeItem('authToken');
   localStorage.removeItem('user');
-  window.location.href = './login.html';
+  window.location.replace('./login.html');
 }
 
 // Check authentication on protected pages
 function checkAuth() {
   const token = localStorage.getItem('authToken');
-  if (!token) {
-    window.location.href = './login.html';
+  const currentPage = window.location.pathname;
+  const isLoginPage = currentPage.includes('login.html');
+  
+  if (!token && !isLoginPage) {
+    window.location.replace('./login.html');
     return false;
   }
   return true;
