@@ -17,25 +17,36 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadVehiculos() {
   try {
     vehiculos = await apiRequest(API_CONFIG.ENDPOINTS.VEHICULOS);
-    renderVehiculos(vehiculos);
+    if (vehiculos) {
+      renderVehiculos(vehiculos);
+    }
   } catch (error) {
     console.error('Error loading vehiculos:', error);
-    showNotification('Error al cargar los vehículos', 'error');
+    vehiculos = [];
+    renderVehiculos(vehiculos);
   }
 }
 
 async function loadClientes() {
   try {
     clientes = await apiRequest(API_CONFIG.ENDPOINTS.CLIENTES);
-    populateClientesSelect();
+    if (clientes) {
+      populateClientesSelect();
+    }
   } catch (error) {
     console.error('Error loading clientes:', error);
+    clientes = [];
+    populateClientesSelect();
   }
 }
 
 function renderVehiculos(vehiculosToRender) {
   const tbody = document.getElementById('vehiculosTable');
   tbody.innerHTML = '';
+  
+  if (!vehiculosToRender || !Array.isArray(vehiculosToRender)) {
+    return;
+  }
   
   vehiculosToRender.forEach(vehiculo => {
     const row = document.createElement('tr');
@@ -71,6 +82,10 @@ function filterVehiculos(searchTerm) {
 function populateClientesSelect() {
   const select = document.getElementById('clienteId');
   select.innerHTML = '<option value="">Seleccionar cliente</option>';
+  
+  if (!clientes || !Array.isArray(clientes)) {
+    return;
+  }
   
   clientes.forEach(cliente => {
     const option = document.createElement('option');

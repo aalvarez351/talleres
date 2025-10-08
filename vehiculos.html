@@ -197,6 +197,12 @@
   <script src="./assets/js/core/bootstrap.min.js"></script>
   <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
   <script src="./assets/js/plugins/bootstrap-notify.js"></script>
+  <script>
+    // Fix PerfectScrollbar reference
+    if (typeof PerfectScrollbar === 'undefined') {
+      window.PerfectScrollbar = window.PerfectScrollbar || {};
+    }
+  </script>
   <script src="./assets/js/paper-dashboard.min.js?v=2.0.1"></script>
   <script src="./js/config.js"></script>
   <script>
