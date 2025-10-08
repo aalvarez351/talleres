@@ -1,9 +1,84 @@
-<script>
-    // Check if user is logged in
-    const token = localStorage.getItem('authToken');
-    if (token) {
-        window.location.href = "./dashboard.html";
-    } else {
-        window.location.href = "./login.html";
-    }
-</script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoGestor - Gestión de Talleres Mecánicos</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f4f4f4; }
+        header { background-color: #007bff; color: white; padding: 20px; text-align: center; }
+        .hero { padding: 50px 20px; text-align: center; background-color: #fff; }
+        .features { padding: 50px 20px; }
+        .features .feature { margin: 20px; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background-color: #fff; }
+        .advantages { padding: 50px 20px; background-color: #f8f9fa; }
+        .cta { padding: 50px 20px; text-align: center; }
+        footer { background-color: #343a40; color: white; padding: 20px; text-align: center; }
+        button { background-color: #28a745; color: white; border: none; padding: 15px 30px; font-size: 18px; cursor: pointer; border-radius: 5px; }
+        button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AutoGestor</h1>
+        <p>Sistema de Gestión para Talleres Mecánicos</p>
+        <button onclick="window.location.href='login.html'">Iniciar Sesión</button>
+    </header>
+
+    <section class="hero">
+        <h2>Gestión Eficiente para tu Taller Mecánico</h2>
+        <p>AutoGestor es la solución completa para optimizar las operaciones diarias de tu taller, desde la gestión de clientes hasta reportes detallados.</p>
+    </section>
+
+    <section class="features">
+        <h2>Características Principales</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+            <div class="feature">
+                <h3>Gestión de Clientes</h3>
+                <p>Registra y administra la información de tus clientes de manera eficiente.</p>
+            </div>
+            <div class="feature">
+                <h3>Control de Vehículos</h3>
+                <p>Vincula vehículos a clientes y mantén un historial completo de servicios.</p>
+            </div>
+            <div class="feature">
+                <h3>Órdenes de Servicio</h3>
+                <p>Crea y sigue órdenes de trabajo con detalles de repuestos y mano de obra.</p>
+            </div>
+            <div class="feature">
+                <h3>Inventario de Repuestos</h3>
+                <p>Controla stock y actualiza automáticamente al completar servicios.</p>
+            </div>
+            <div class="feature">
+                <h3>Reportes Avanzados</h3>
+                <p>Genera reportes de ingresos, servicios y totales por cliente o vehículo.</p>
+            </div>
+            <div class="feature">
+                <h3>Autenticación Segura</h3>
+                <p>Acceso controlado por roles: Administrador, Mecánico y Recepción.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="advantages">
+        <h2>Ventajas de Usar AutoGestor</h2>
+        <ul style="max-width: 800px; margin: 0 auto;">
+            <li>Interfaz intuitiva y fácil de usar, compatible con móviles.</li>
+            <li>Automatización de procesos para reducir errores y tiempo.</li>
+            <li>Mejora la eficiencia operativa y aumenta la satisfacción del cliente.</li>
+            <li>Reportes en tiempo real para toma de decisiones informadas.</li>
+            <li>Escalable y seguro, con respaldo en la nube.</li>
+            <li>Soporte técnico continuo y actualizaciones regulares.</li>
+        </ul>
+    </section>
+
+    <section class="cta">
+        <h2>¡Comienza a Optimizar tu Taller Hoy!</h2>
+        <p>Únete a talleres que ya confían en AutoGestor para su gestión diaria.</p>
+        <button onclick="window.location.href='login.html'">Acceder al Sistema</button>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 AutoGestor. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
