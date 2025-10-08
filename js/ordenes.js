@@ -5,6 +5,7 @@ let vehiculos = [];
 let repuestos = [];
 let editingOrdenId = null;
 let ordenCounter = 1;
+let selectedRepuestos = [];
 
 document.addEventListener('DOMContentLoaded', function() {
   loadOrdenes();
@@ -185,14 +186,22 @@ function loadVehiculosByCliente() {
 
 function calcularTotal() {
   const manoObra = parseFloat(document.getElementById('manoDeObra').value) || 0;
-  // In future versions, add repuestos cost here
-  const repuestosCost = 0; // TODO: Calculate from selected repuestos
-  const total = manoObra + repuestosCost;
+  const repuestosCost = selectedRepuestos.reduce((sum, item) => sum + (item.cantidad * item.precio), 0);
+  const subtotal = manoObra + repuestosCost;
+  const impuesto = subtotal * 0.07; // 7% por ley
+  const total = subtotal + impuesto;
   
   const totalField = document.getElementById('total');
   if (totalField) {
     totalField.value = total.toFixed(2);
   }
+  
+  // Update display
+  document.getElementById('costoManoObra').textContent = formatCurrency(manoObra);
+  document.getElementById('costoRepuestos').textContent = formatCurrency(repuestosCost);
+  document.getElementById('subtotalCosto').textContent = formatCurrency(subtotal);
+  document.getElementById('impuestoCosto').textContent = formatCurrency(impuesto);
+  document.getElementById('costoTotal').textContent = formatCurrency(total);
 }
 
 function viewOrden(id) {
@@ -201,14 +210,21 @@ function viewOrden(id) {
     const cliente = clientes.find(c => c._id === (orden.cliente?._id || orden.cliente));
     const vehiculo = vehiculos.find(v => v._id === (orden.vehiculo?._id || orden.vehiculo));
     
+    const subtotal = orden.subtotal || (orden.total ? orden.total / 1.07 : 0);
+    const impuesto = orden.impuesto || (subtotal * 0.07);
+    const repuestosCosto = orden.repuestos?.reduce((sum, item) => sum + (item.costo || 0), 0) || 0;
+    
     let detalles = `
       <strong>Orden:</strong> ${orden.numero || orden.numeroOrden || 'N/A'}<br>
       <strong>Cliente:</strong> ${cliente?.nombre || 'N/A'}<br>
       <strong>Vehículo:</strong> ${vehiculo ? `${vehiculo.marca} ${vehiculo.modelo} - ${vehiculo.placa}` : 'N/A'}<br>
       <strong>Descripción:</strong> ${orden.descripcion || 'N/A'}<br>
-      <strong>Estado:</strong> ${orden.estado || 'Pendiente'}<br>
+      <strong>Estado:</strong> ${orden.estado || 'Pendiente'}<br><br>
       <strong>Mano de Obra:</strong> ${formatCurrency(orden.manoDeObra || orden.manoObra || 0)}<br>
-      <strong>Total:</strong> ${formatCurrency(orden.total || 0)}<br>
+      <strong>Repuestos:</strong> ${formatCurrency(repuestosCosto)}<br>
+      <strong>Subtotal:</strong> ${formatCurrency(subtotal)}<br>
+      <strong>Impuesto (7%):</strong> ${formatCurrency(impuesto)}<br>
+      <strong>Total:</strong> ${formatCurrency(orden.total || 0)}<br><br>
       <strong>Fecha:</strong> ${formatDate(orden.createdAt || orden.fechaCreacion || new Date())}
     `;
     
@@ -247,12 +263,13 @@ function viewOrden(id) {
 
 function showOrdenModal(orden = null) {
   editingOrdenId = orden ? orden._id : null;
+  selectedRepuestos = [];
   
   document.getElementById('ordenModalTitle').textContent = 
     orden ? 'Editar Orden' : 'Nueva Orden';
   
-  // Reset form
   document.getElementById('ordenForm').reset();
+  populateRepuestosSelect();
   
   if (orden) {
     document.getElementById('ordenId').value = orden._id;
@@ -263,9 +280,16 @@ function showOrdenModal(orden = null) {
     document.getElementById('descripcion').value = orden.descripcion || '';
     document.getElementById('manoDeObra').value = orden.manoDeObra || orden.manoObra || 0;
     document.getElementById('estado').value = orden.estado || 'Pendiente';
-    document.getElementById('total').value = orden.total || 0;
     
-    // Load vehiculos for selected cliente
+    if (orden.repuestos && Array.isArray(orden.repuestos)) {
+      selectedRepuestos = orden.repuestos.map(item => ({
+        repuesto: item.repuesto,
+        nombre: item.nombre,
+        cantidad: item.cantidad,
+        precio: item.precio
+      }));
+    }
+    
     if (clienteId) {
       loadVehiculosByCliente();
       setTimeout(() => {
@@ -273,10 +297,11 @@ function showOrdenModal(orden = null) {
       }, 200);
     }
   } else {
-    // Generate new orden number
     generateOrdenNumber();
   }
   
+  renderSelectedRepuestos();
+  calcularTotal();
   $('#ordenModal').modal('show');
 }
 
@@ -312,7 +337,6 @@ async function saveOrden() {
   const descripcion = document.getElementById('descripcion').value;
   const manoDeObra = parseFloat(document.getElementById('manoDeObra').value) || 0;
   const estado = document.getElementById('estado').value;
-  const total = parseFloat(document.getElementById('total').value) || manoDeObra;
   
   if (!clienteId || !vehiculoId || !descripcion) {
     showNotification('Por favor complete todos los campos requeridos', 'error');
@@ -325,10 +349,12 @@ async function saveOrden() {
     descripcion: descripcion,
     manoDeObra: manoDeObra,
     estado: estado,
-    total: total
+    repuestos: selectedRepuestos.map(item => ({
+      repuesto: item.repuesto,
+      cantidad: item.cantidad
+    }))
   };
   
-  // Add orden number for new orders
   if (!editingOrdenId) {
     const year = new Date().getFullYear();
     const nextNumber = String(ordenCounter).padStart(3, '0');
@@ -339,14 +365,12 @@ async function saveOrden() {
   try {
     let response;
     if (editingOrdenId) {
-      // Update existing orden
       response = await apiRequest(`${API_CONFIG.ENDPOINTS.ORDENES}/${editingOrdenId}`, {
         method: 'PUT',
         body: JSON.stringify(ordenData)
       });
       showNotification('Orden actualizada exitosamente');
     } else {
-      // Create new orden
       response = await apiRequest(API_CONFIG.ENDPOINTS.ORDENES, {
         method: 'POST',
         body: JSON.stringify(ordenData)
@@ -356,6 +380,7 @@ async function saveOrden() {
     
     $('#ordenModal').modal('hide');
     await loadOrdenes();
+    await loadRepuestos();
   } catch (error) {
     console.error('Error saving orden:', error);
     showNotification('Error al guardar la orden: ' + (error.message || 'Error desconocido'), 'error');
@@ -372,9 +397,86 @@ async function deleteOrden(id) {
       method: 'DELETE'
     });
     showNotification('Orden eliminada exitosamente');
-    loadOrdenes();
+    await loadOrdenes();
+    await loadRepuestos();
   } catch (error) {
     console.error('Error deleting orden:', error);
     showNotification('Error al eliminar la orden', 'error');
   }
+}
+
+function agregarRepuesto() {
+  const repuestoId = document.getElementById('repuestoSelect').value;
+  const cantidad = parseInt(document.getElementById('cantidadRepuesto').value) || 1;
+  
+  if (!repuestoId) {
+    showNotification('Seleccione un repuesto', 'warning');
+    return;
+  }
+  
+  const repuesto = repuestos.find(r => r._id === repuestoId);
+  if (!repuesto || cantidad > repuesto.stock) {
+    showNotification(`Stock insuficiente. Disponible: ${repuesto?.stock || 0}`, 'error');
+    return;
+  }
+  
+  const existingIndex = selectedRepuestos.findIndex(item => item.repuesto === repuestoId);
+  if (existingIndex >= 0) {
+    selectedRepuestos[existingIndex].cantidad += cantidad;
+  } else {
+    selectedRepuestos.push({
+      repuesto: repuestoId,
+      nombre: repuesto.nombre,
+      cantidad: cantidad,
+      precio: repuesto.precio
+    });
+  }
+  
+  document.getElementById('repuestoSelect').value = '';
+  document.getElementById('cantidadRepuesto').value = '1';
+  renderSelectedRepuestos();
+  calcularTotal();
+}
+
+function renderSelectedRepuestos() {
+  const container = document.getElementById('selectedRepuestos');
+  if (!container) return;
+  
+  if (selectedRepuestos.length === 0) {
+    container.innerHTML = '<p class="text-muted">No hay repuestos seleccionados</p>';
+    return;
+  }
+  
+  container.innerHTML = selectedRepuestos.map((item, index) => `
+    <div class="row mb-2 p-2 border rounded">
+      <div class="col-4"><strong>${item.nombre}</strong></div>
+      <div class="col-2">Cant: ${item.cantidad}</div>
+      <div class="col-3">${formatCurrency(item.precio)} c/u</div>
+      <div class="col-2"><strong>${formatCurrency(item.cantidad * item.precio)}</strong></div>
+      <div class="col-1">
+        <button class="btn btn-sm btn-danger" onclick="removeRepuesto(${index})">
+          <i class="nc-icon nc-simple-remove"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removeRepuesto(index) {
+  selectedRepuestos.splice(index, 1);
+  renderSelectedRepuestos();
+  calcularTotal();
+}
+
+function populateRepuestosSelect() {
+  const select = document.getElementById('repuestoSelect');
+  if (!select) return;
+  
+  select.innerHTML = '<option value="">Seleccionar repuesto</option>';
+  repuestos.filter(r => r.stock > 0).forEach(repuesto => {
+    const option = document.createElement('option');
+    option.value = repuesto._id;
+    option.textContent = `${repuesto.nombre} - Stock: ${repuesto.stock} - ${formatCurrency(repuesto.precio)}`;
+    select.appendChild(option);
+  });
 }

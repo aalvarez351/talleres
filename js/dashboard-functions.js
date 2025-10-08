@@ -25,7 +25,8 @@ async function loadOrdenesPendientes() {
   try {
     const ordenes = await apiRequest(API_CONFIG.ENDPOINTS.ORDENES);
     if (!ordenes || !Array.isArray(ordenes)) {
-      document.getElementById('ordenesPendientes').textContent = '0';
+      console.log('No orders found or invalid data');
+      updateMechanicCounters(0, 0, 0, 0);
       return;
     }
     
@@ -36,12 +37,12 @@ async function loadOrdenesPendientes() {
       o.estado === 'Completado' && 
       new Date(o.createdAt || o.fechaCreacion).toDateString() === hoy
     );
+    const urgentes = pendientes.filter(o => isUrgent(o));
+    
+    console.log(`Mechanic Dashboard - Pendientes: ${pendientes.length}, En Progreso: ${enProgreso.length}, Completadas Hoy: ${completadasHoy.length}, Urgentes: ${urgentes.length}`);
     
     // Update counters
-    document.getElementById('ordenesPendientes').textContent = pendientes.length;
-    document.getElementById('ordenesEnProgreso').textContent = enProgreso.length;
-    document.getElementById('ordenesCompletadas').textContent = completadasHoy.length;
-    document.getElementById('ordenesUrgentes').textContent = pendientes.filter(o => isUrgent(o)).length;
+    updateMechanicCounters(pendientes.length, enProgreso.length, completadasHoy.length, urgentes.length);
     
     // Render lists
     renderOrdenesByStatus('ordenesPendientesList', pendientes, 'Pendiente');
@@ -50,11 +51,24 @@ async function loadOrdenesPendientes() {
     
   } catch (error) {
     console.error('Error loading mechanic orders:', error);
-    document.getElementById('ordenesPendientes').textContent = '0';
-    document.getElementById('ordenesEnProgreso').textContent = '0';
-    document.getElementById('ordenesCompletadas').textContent = '0';
-    document.getElementById('ordenesUrgentes').textContent = '0';
+    updateMechanicCounters(0, 0, 0, 0);
   }
+}
+
+function updateMechanicCounters(pendientes, enProgreso, completadas, urgentes) {
+  const elements = {
+    'ordenesPendientes': pendientes,
+    'ordenesEnProgreso': enProgreso,
+    'ordenesCompletadas': completadas,
+    'ordenesUrgentes': urgentes
+  };
+  
+  Object.entries(elements).forEach(([id, value]) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = value;
+    }
+  });
 }
 
 function isUrgent(orden) {
@@ -172,8 +186,9 @@ async function cambiarEstadoOrden(ordenId, nuevoEstado) {
     
     showNotification(`Orden cambiada a: ${nuevoEstado}`, 'success');
     
-    // Reload mechanic dashboard
-    await loadMecanicoDashboard();
+    // Reload mechanic dashboard immediately
+    await loadOrdenesPendientes();
+    console.log('Order status updated and dashboard refreshed');
     
   } catch (error) {
     console.error('Error updating order status:', error);

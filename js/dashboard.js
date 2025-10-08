@@ -1,8 +1,47 @@
 // Dashboard functionality
+let dashboardInterval;
+
 document.addEventListener('DOMContentLoaded', async function() {
   const user = JSON.parse(localStorage.getItem('user'));
   setupDashboardByRole(user.role);
   await loadDashboardData();
+  
+  // Setup real-time updates every 30 seconds
+  startRealTimeUpdates();
+});
+
+function startRealTimeUpdates() {
+  // Clear any existing interval
+  if (dashboardInterval) {
+    clearInterval(dashboardInterval);
+  }
+  
+  // Update every 30 seconds
+  dashboardInterval = setInterval(async () => {
+    try {
+      await loadDashboardData();
+      console.log('Dashboard updated at:', new Date().toLocaleTimeString());
+    } catch (error) {
+      console.error('Error updating dashboard:', error);
+    }
+  }, 30000);
+}
+
+// Stop updates when page is hidden/unloaded
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    if (dashboardInterval) {
+      clearInterval(dashboardInterval);
+    }
+  } else {
+    startRealTimeUpdates();
+  }
+});
+
+window.addEventListener('beforeunload', function() {
+  if (dashboardInterval) {
+    clearInterval(dashboardInterval);
+  }
 });
 
 function setupDashboardByRole(role) {
@@ -62,6 +101,7 @@ async function loadAdminDashboard() {
 
 async function loadMecanicoDashboard() {
   await loadOrdenesPendientes();
+  console.log('Mechanic dashboard updated at:', new Date().toLocaleTimeString());
 }
 
 async function loadRecepcionDashboard() {

@@ -9,7 +9,8 @@ const API_CONFIG = {
     VEHICULOS: '/vehiculos',
     ORDENES: '/ordenes',
     REPUESTOS: '/repuestos',
-    AUTH: '/auth'
+    AUTH: '/auth',
+    CIERRES: '/cierres'
   }
 };
 
