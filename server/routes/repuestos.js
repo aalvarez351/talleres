@@ -1,11 +1,10 @@
 const express = require('express');
 const Repuesto = require('../models/Repuesto');
-const auth = require('../middleware/auth');
 
 const router = express.Router();
 
 // Get all repuestos
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const repuestos = await Repuesto.find();
     res.json(repuestos);
@@ -15,7 +14,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get one repuesto
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const repuesto = await Repuesto.findById(req.params.id);
     if (!repuesto) return res.status(404).json({ message: 'Repuesto not found' });
@@ -26,7 +25,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create repuesto
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   const repuesto = new Repuesto(req.body);
   try {
     const newRepuesto = await repuesto.save();
@@ -37,7 +36,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update repuesto
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const repuesto = await Repuesto.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!repuesto) return res.status(404).json({ message: 'Repuesto not found' });
@@ -48,7 +47,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Delete repuesto
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const repuesto = await Repuesto.findByIdAndDelete(req.params.id);
     if (!repuesto) return res.status(404).json({ message: 'Repuesto not found' });

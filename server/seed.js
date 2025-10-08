@@ -12,21 +12,7 @@ const mongodbUri = process.env.MONGODB_URI || 'mongodb+srv://aalvarez351:Lentesd
 
 mongoose.connect(mongodbUri);
 
-// Auto-run seed on server start if no data exists
-const autoSeed = async () => {
-  try {
-    const clienteCount = await Cliente.countDocuments();
-    if (clienteCount === 0) {
-      console.log('🌱 No data found. Running auto-seed...');
-      await seedData();
-    }
-  } catch (error) {
-    console.log('Auto-seed check failed:', error.message);
-  }
-};
 
-// Export for use in server
-module.exports = { seedData, autoSeed };
 
 const seedData = async () => {
   try {
@@ -119,36 +105,33 @@ const seedData = async () => {
 
     // Create ordenes
     const orden1 = new Orden({
-      numeroOrden: 'OS-2025-001',
+      numero: 'OS-2025-001',
       cliente: cliente1._id,
       vehiculo: vehiculo1._id,
       descripcion: 'Cambio de aceite y filtros',
-      manoObra: 50000,
+      manoDeObra: 50000,
       total: 130000,
-      estado: 'Completado',
-      fechaCreacion: new Date()
+      estado: 'Completado'
     });
     
     const orden2 = new Orden({
-      numeroOrden: 'OS-2025-002',
+      numero: 'OS-2025-002',
       cliente: cliente2._id,
       vehiculo: vehiculo2._id,
       descripcion: 'Cambio de pastillas de freno',
-      manoObra: 80000,
+      manoDeObra: 80000,
       total: 155000,
-      estado: 'En progreso',
-      fechaCreacion: new Date()
+      estado: 'En progreso'
     });
     
     const orden3 = new Orden({
-      numeroOrden: 'OS-2025-003',
+      numero: 'OS-2025-003',
       cliente: cliente3._id,
       vehiculo: vehiculo3._id,
       descripcion: 'Mantenimiento general',
-      manoObra: 120000,
+      manoDeObra: 120000,
       total: 250000,
-      estado: 'Pendiente',
-      fechaCreacion: new Date()
+      estado: 'Pendiente'
     });
     
     await orden1.save();

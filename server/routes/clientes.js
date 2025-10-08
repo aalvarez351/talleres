@@ -6,7 +6,7 @@ const router = express.Router();
 // Get all clientes
 router.get('/', async (req, res) => {
   try {
-    const clientes = await Cliente.find().populate('cliente');
+    const clientes = await Cliente.find();
     res.json(clientes);
   } catch (err) {
     res.status(500).json({ message: err.message });
