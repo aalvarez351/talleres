@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>AutoGestor - Gestión de Pagos</title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="./assets/css/paper-dashboard.css?v=2.0.1" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="sidebar" data-color="white" data-active-color="danger">
+      <div class="logo">
+        <a href="./admin-dashboard.html" class="simple-text logo-mini">
+          <div class="logo-image-small">
+            <img src="./assets/img/logo-small.png">
+          </div>
+        </a>
+        <a href="./admin-dashboard.html" class="simple-text logo-normal">
+          Admin Global
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <ul class="nav">
+          <li>
+            <a href="./admin-dashboard.html">
+              <i class="nc-icon nc-bank"></i>
+              <p>Dashboard</p>
+            </a>
+          </li>
+          <li>
+            <a href="./admin-talleres.html">
+              <i class="nc-icon nc-shop"></i>
+              <p>Talleres</p>
+            </a>
+          </li>
+          <li class="active">
+            <a href="./admin-pagos.html">
+              <i class="nc-icon nc-money-coins"></i>
+              <p>Pagos</p>
+            </a>
+          </li>
+          <li>
+            <a href="./admin-reportes.html">
+              <i class="nc-icon nc-chart-bar-32"></i>
+              <p>Reportes</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="main-panel">
+      <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <div class="navbar-toggle">
+              <button type="button" class="navbar-toggler">
+                <span class="navbar-toggler-bar bar1"></span>
+                <span class="navbar-toggler-bar bar2"></span>
+                <span class="navbar-toggler-bar bar3"></span>
+              </button>
+            </div>
+            <a class="navbar-brand" href="javascript:;">Gestión de Pagos</a>
+          </div>
+          <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="javascript:;" onclick="logout()">
+                  <i class="nc-icon nc-button-power"></i>
+                  <span class="d-lg-none d-md-block">Salir</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="content">
+        <!-- Talleres con Pagos Vencidos -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title text-danger">⚠️ Talleres con Pagos Vencidos</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class="text-primary">
+                      <tr>
+                        <th>Taller</th>
+                        <th>Plan</th>
+                        <th>Días Vencido</th>
+                        <th>Monto</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="talleresVencidos">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registro de Pagos -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <div class="row">
+                  <div class="col-md-6">
+                    <h5 class="card-title">Historial de Pagos</h5>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <button class="btn btn-primary btn-sm" onclick="showPagoModal()">
+                      <i class="nc-icon nc-simple-add"></i> Registrar Pago
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchPago" placeholder="Buscar por taller...">
+                  </div>
+                  <div class="col-md-3">
+                    <select class="form-control" id="filterEstadoPago">
+                      <option value="">Todos los estados</option>
+                      <option value="confirmado">Confirmado</option>
+                      <option value="pendiente">Pendiente</option>
+                      <option value="rechazado">Rechazado</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <input type="month" class="form-control" id="filterMes">
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class="text-primary">
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Taller</th>
+                        <th>Monto</th>
+                        <th>Método</th>
+                        <th>Estado</th>
+                        <th>Período</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="pagosTable">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pago -->
+  <div class="modal fade" id="pagoModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Registrar Pago</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="pagoForm">
+            <div class="form-group">
+              <label>Taller *</label>
+              <select class="form-control" id="tallerId" required onchange="updateMontoSugerido()">
+                <option value="">Seleccionar taller</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Monto *</label>
+                  <input type="number" class="form-control" id="monto" step="0.01" required>
+                  <small class="form-text text-muted">Monto sugerido: <span id="montoSugerido">$0</span></small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Método de Pago</label>
+                  <select class="form-control" id="metodoPago">
+                    <option value="transferencia">Transferencia</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Referencia</label>
+              <input type="text" class="form-control" id="referencia" placeholder="Número de transacción, recibo, etc.">
+            </div>
+            <div class="form-group">
+              <label>Notas</label>
+              <textarea class="form-control" id="notas" rows="3" placeholder="Observaciones adicionales..."></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="savePago()">Registrar Pago</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/js/core/jquery.min.js"></script>
+  <script src="./assets/js/core/popper.min.js"></script>
+  <script src="./assets/js/core/bootstrap.min.js"></script>
+  <script src="./assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <script src="./assets/js/paper-dashboard.min.js?v=2.0.1"></script>
+  <script src="./js/config.js"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'global_admin') {
+      window.location.href = './login.html';
+    }
+    
+    function logout() {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      window.location.href = './login.html';
+    }
+  </script>
+  <script src="./js/admin-pagos.js"></script>
+</body>
+</html>
