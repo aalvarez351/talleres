@@ -38,7 +38,7 @@ mongoose.connect(mongodbUri)
 })
 .catch(err => console.error('MongoDB connection error:', err));
 
-// Routes
+// Routes (without authentication for demo)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/clientes', require('./routes/clientes'));
 app.use('/api/vehiculos', require('./routes/vehiculos'));

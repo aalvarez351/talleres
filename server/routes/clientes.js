@@ -1,13 +1,12 @@
 const express = require('express');
 const Cliente = require('../models/Cliente');
-const auth = require('../middleware/auth');
 
 const router = express.Router();
 
 // Get all clientes
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const clientes = await Cliente.find();
+    const clientes = await Cliente.find().populate('cliente');
     res.json(clientes);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -15,7 +14,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get one cliente
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const cliente = await Cliente.findById(req.params.id);
     if (!cliente) return res.status(404).json({ message: 'Cliente not found' });
@@ -26,7 +25,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create cliente
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   const cliente = new Cliente(req.body);
   try {
     const newCliente = await cliente.save();
@@ -37,7 +36,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update cliente
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const cliente = await Cliente.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!cliente) return res.status(404).json({ message: 'Cliente not found' });
@@ -48,7 +47,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Delete cliente
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const cliente = await Cliente.findByIdAndDelete(req.params.id);
     if (!cliente) return res.status(404).json({ message: 'Cliente not found' });
