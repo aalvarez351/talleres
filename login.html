@@ -69,7 +69,43 @@
 
   <script src="./assets/js/core/jquery.min.js"></script>
   <script src="./assets/js/core/bootstrap.min.js"></script>
-  <script src="./js/config.js"></script>
-  <script src="./js/auth.js"></script>
+  <script>
+    // Check if already logged in
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      window.location.href = './dashboard.html';
+    }
+    
+    // Login form handler
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+      }
+    });
+    
+    function handleLogin(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      const users = {
+        'admin@example.com': { role: 'admin', name: 'Administrador' },
+        'mecanico@example.com': { role: 'mecanico', name: 'Mecánico' },
+        'recepcion@example.com': { role: 'recepcion', name: 'Recepcionista' }
+      };
+      
+      if (users[email] && password === 'password') {
+        const user = users[email];
+        const demoToken = 'demo-token-' + Date.now();
+        localStorage.setItem('authToken', demoToken);
+        localStorage.setItem('user', JSON.stringify({ email, ...user }));
+        window.location.href = './dashboard.html';
+      } else {
+        alert('Email o contraseña incorrectos');
+      }
+    }
+  </script>
 </body>
 </html>
